@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "TruthLens Naija"
+description = "TruthLens Naija is a WhatsApp chatbot and dashboard for Nigerian users to check claims and assess media authenticity. It connects to WhatsApp with a scannable QR code, cross-checks claims using Google Fact Check and Tavily in parallel, and uses Groq with NVIDIA fallback plus Sightengine media analysis."
+version = "1.0.0"
+id = "artifacts/truthlens-naija"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 22566
+
+[services.development]
+run = "pnpm --filter @workspace/truthlens-naija run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/truthlens-naija", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/truthlens-naija/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "22566"
+BASE_PATH = "/"

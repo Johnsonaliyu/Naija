@@ -10,6 +10,8 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: truthlens
+    description: TruthLens Naija dashboard and WhatsApp controls
 paths:
   /healthz:
     get:
@@ -24,6 +26,48 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /truthlens/dashboard:
+    get:
+      operationId: getTruthLensDashboard
+      tags: [truthlens]
+      summary: Get WhatsApp status and recent fact-check activity
+      responses:
+        "200":
+          description: Dashboard snapshot
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TruthLensDashboard"
+        "401":
+          description: Sign-in required
+  /truthlens/whatsapp/connect:
+    post:
+      operationId: connectTruthLensWhatsApp
+      tags: [truthlens]
+      summary: Start or resume a WhatsApp Web connection
+      responses:
+        "200":
+          description: Connection attempt started
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WhatsAppActionResult"
+        "401":
+          description: Sign-in required
+  /truthlens/whatsapp/disconnect:
+    post:
+      operationId: disconnectTruthLensWhatsApp
+      tags: [truthlens]
+      summary: Disconnect WhatsApp and clear its saved session
+      responses:
+        "200":
+          description: WhatsApp disconnected
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WhatsAppActionResult"
+        "401":
+          description: Sign-in required
 components:
   schemas:
     HealthStatus:
@@ -33,4 +77,103 @@ components:
           type: string
       required:
         - status
+    TruthLensDashboard:
+      type: object
+      required: [whatsapp, providers, metrics, recentActivity]
+      properties:
+        whatsapp:
+          $ref: "#/components/schemas/WhatsAppStatus"
+        providers:
+          $ref: "#/components/schemas/ProviderStatus"
+        metrics:
+          $ref: "#/components/schemas/DashboardMetrics"
+        recentActivity:
+          type: array
+          items:
+            $ref: "#/components/schemas/RecentActivity"
+    WhatsAppStatus:
+      type: object
+      required: [state, qrCode, phoneNumber, connectedAt, lastError]
+      properties:
+        state:
+          type: string
+          enum: [idle, connecting, qr, connected, disconnected, error]
+        qrCode:
+          type: ["string", "null"]
+        phoneNumber:
+          type: ["string", "null"]
+        connectedAt:
+          type: ["string", "null"]
+          format: date-time
+        lastError:
+          type: ["string", "null"]
+    ProviderStatus:
+      type: object
+      required: [groq, nvidia, googleFactCheck, tavily, sightengine]
+      properties:
+        groq:
+          type: boolean
+        nvidia:
+          type: boolean
+        googleFactCheck:
+          type: boolean
+        tavily:
+          type: boolean
+        sightengine:
+          type: boolean
+    DashboardMetrics:
+      type: object
+      required: [messagesReceived, claimsChecked, mediaChecked, flaggedCount]
+      properties:
+        messagesReceived:
+          type: integer
+        claimsChecked:
+          type: integer
+        mediaChecked:
+          type: integer
+        flaggedCount:
+          type: integer
+    RecentActivity:
+      type: object
+      required: [id, type, submittedBy, summary, verdict, confidence, createdAt, sources]
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum: [claim, media]
+        submittedBy:
+          type: string
+        summary:
+          type: string
+        verdict:
+          type: string
+        confidence:
+          type: integer
+          minimum: 0
+          maximum: 100
+        createdAt:
+          type: string
+          format: date-time
+        sources:
+          type: array
+          items:
+            $ref: "#/components/schemas/SourceLink"
+    SourceLink:
+      type: object
+      required: [name, url, rating]
+      properties:
+        name:
+          type: string
+        url:
+          type: string
+          format: uri
+        rating:
+          type: ["string", "null"]
+    WhatsAppActionResult:
+      type: object
+      required: [message]
+      properties:
+        message:
+          type: string
 
