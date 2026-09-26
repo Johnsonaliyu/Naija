@@ -1,6 +1,6 @@
 [build]
 builder = "NIXPACKS"
-buildCommand = "corepack enable && pnpm install --frozen-lockfile && pnpm --filter \"@workspace/api-server...\" run build"
+buildCommand = "corepack enable && pnpm install --frozen-lockfile && pnpm --filter \"@workspace/api-server...\" run build && BASE_PATH=/ PORT=3000 pnpm --filter \"@workspace/truthlens-naija\" run build"
 
 [deploy]
 startCommand = "cd artifacts/api-server && node --enable-source-maps dist/index.mjs"
