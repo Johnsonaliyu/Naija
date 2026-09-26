@@ -186,6 +186,10 @@ async function processIncomingMessage(
           "Sightengine’s synchronous video check supports clips under 60 seconds. Please send a shorter clip.",
         );
       }
+      await currentSocket.sendPresenceUpdate("composing", jid);
+      await currentSocket.sendMessage(jid, {
+        text: "🔎 Checking that for you, one moment…",
+      });
       const bytes = await downloadMedia(message);
       const filename =
         mediaType === "image"
@@ -200,13 +204,22 @@ async function processIncomingMessage(
         senderName,
       );
     } else if (mediaType === "image") {
+      await currentSocket.sendPresenceUpdate("composing", jid);
+      await currentSocket.sendMessage(jid, {
+        text: "🔎 Checking that for you, one moment…",
+      });
       const bytes = await downloadMedia(message);
       result = await checkImageClaim(bytes, mimeType, text, senderName);
     } else {
+      await currentSocket.sendPresenceUpdate("composing", jid);
+      await currentSocket.sendMessage(jid, {
+        text: "🔎 Checking that for you, one moment…",
+      });
       result = await checkTextClaim(text, senderName);
     }
 
     pushActivity(result.activity);
+    await currentSocket.sendPresenceUpdate("paused", jid);
     await currentSocket.sendMessage(jid, { text: result.reply });
   } catch (error) {
     const messageText =
@@ -215,6 +228,7 @@ async function processIncomingMessage(
       { mediaType, err: messageText.slice(0, 200) },
       "TruthLens message check failed",
     );
+    await currentSocket.sendPresenceUpdate("paused", jid);
     await currentSocket.sendMessage(jid, {
       text: `*TruthLens Naija*\n\nI couldn’t complete this check: ${messageText.slice(0, 220)}\n\nNo verdict was produced. Please try again later.`,
     });
