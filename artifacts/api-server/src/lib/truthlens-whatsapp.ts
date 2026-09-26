@@ -121,14 +121,19 @@ function isGreeting(text: string): boolean {
 
 function greetingReply(name: string): string {
   return [
-    `Hi ${name}! I’m *TruthLens Naija*, your WhatsApp fact-checking assistant.`,
-    "",
-    "Send a claim or message and I’ll check it against Google Fact Check and current web sources.",
-    "Share an image with a question and I’ll read its visible claims, then check them.",
-    "Send an image or video and ask whether it’s authentic or AI-generated for a Sightengine analysis.",
-    "",
-    "I’ll give you a concise assessment, confidence score, and links to sources. A score is not proof, so verify important claims before sharing.",
-  ].join("\n");
+    `Hi ${name}! 👋`,
+    `I’m *TruthLens Naija*, your WhatsApp fact-checking assistant.`,
+    [
+      "*Here’s what I can do:*",
+      "",
+      "📝 Send a claim or message — I’ll check it against Google Fact Check and current web sources.",
+      "",
+      "🖼️ Share an image with a question — I’ll read its visible claims, then check them.",
+      "",
+      "🔍 Send an image or video — I’ll analyze whether it’s authentic or AI-generated.",
+    ].join("\n"),
+    "You’ll get a concise assessment, a confidence score, and links to sources.",
+  ].join("\n\n");
 }
 
 function isAuthenticityRequest(text: string): boolean {
