@@ -1,4 +1,3 @@
-import { getAuth } from "@clerk/express";
 import { Router, type IRouter } from "express";
 import {
   ConnectTruthLensWhatsAppResponse,
@@ -12,15 +11,6 @@ import {
 } from "../lib/truthlens-whatsapp";
 
 const router: IRouter = Router();
-
-router.use("/truthlens", (req, res, next) => {
-  const { userId } = getAuth(req);
-  if (!userId) {
-    res.status(401).json({ error: "Sign-in required" });
-    return;
-  }
-  next();
-});
 
 router.get("/truthlens/dashboard", (_req, res): void => {
   res.json(GetTruthLensDashboardResponse.parse(getDashboardSnapshot()));
