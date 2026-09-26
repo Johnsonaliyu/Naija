@@ -386,10 +386,8 @@ function formatAssessment(
     `*Assessment:* ${assessment.verdict}`,
     `*Confidence:* ${assessment.confidence}%`,
     assessment.summary,
-    assessment.caveats ? `*Caveat:* ${assessment.caveats}` : "",
     sourceLimitNote ?? "",
     `*Sources:*\n${formatSources(sources)}`,
-    `_Assessment synthesized by ${aiProvider}. Confidence is not proof; check primary sources before sharing._`,
   ]
     .filter(Boolean)
     .join("\n\n")
