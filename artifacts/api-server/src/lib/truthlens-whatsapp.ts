@@ -12,6 +12,8 @@ import { Boom } from "@hapi/boom";
 import pino from "pino";
 import { logger } from "./logger";
 import {
+  answerQuestion,
+  isQuestion,
   checkImageClaim,
   checkMediaAuthenticity,
   checkTextClaim,
@@ -215,7 +217,9 @@ async function processIncomingMessage(
       await currentSocket.sendMessage(jid, {
         text: "🔎 Checking that for you, one moment…",
       });
-      result = await checkTextClaim(text, senderName);
+     result = isQuestion(text)
+  ? await answerQuestion(text, senderName)
+  : await checkTextClaim(text, senderName); 
     }
 
     pushActivity(result.activity);
