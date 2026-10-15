@@ -243,11 +243,7 @@ async function tavilySearch(query: string): Promise<SourceEvidence> {
   }
 
   const sources: TruthLensSource[] = [];
-  const ranked = (data.results ?? [])
-.filter((r) => r.url && !matches(r.url, BLOCKED_DOMAINS))
-.sort((a, b) => Number(isTrusted(b.url!)) - Number(isTrusted(a.url!)))
-.slice(0, 5);
-const lines = ranked.map((result) => {
+  const lines = (data.results ?? []).map((result) => {
     const title = shortText(result.title, 180);
     const url = validUrl(result.url);
     if (url) sources.push({ name: title || "Web result", url, rating: null });
