@@ -212,31 +212,6 @@ async function googleFactCheck(query: string): Promise<SourceEvidence> {
   };
 }
 
-const BLOCKED_DOMAINS = [
-"instagram.com", "facebook.com", "youtube.com", "tiktok.com",
-"x.com", "twitter.com", "reddit.com", "quora.com",
-"pinterest.com", "threads.net", "t.me",
-];
-
-const TRUSTED_DOMAINS = [
-"premiumtimesng.com", "punchng.com", "thecable.ng", "channelstv.com",
-"guardian.ng", "vanguardngr.com", "dailytrust.com", "businessday.ng",
-"tribuneonlineng.com", "thenationonlineng.net", "bbc.com", "reuters.com",
-"apnews.com", "aljazeera.com", "africacheck.org", "dubawa.org",
-"factcheck.afp.com", "inec.gov.ng",
-];
-
-function hostOf(url: string): string {
-try { return new URL(url).hostname.replace(/^www\./, ""); } catch { return ""; }
-}
-function matches(url: string, list: string[]): boolean {
-const h = hostOf(url);
-return list.some((d) => h === d || h.endsWith(.${d}));
-}
-function isTrusted(url: string): boolean {
-return matches(url, TRUSTED_DOMAINS) || hostOf(url).endsWith(".gov.ng");
-}
-
 async function tavilySearch(query: string): Promise<SourceEvidence> {
   const apiKey = process.env.TAVILY_API_KEY;
   if (!apiKey) throw new Error("Tavily is not configured");
@@ -249,7 +224,6 @@ async function tavilySearch(query: string): Promise<SourceEvidence> {
       query: query.slice(0, 900),
       search_depth: "advanced",
       max_results: 5,
-      exclude_domains: BLOCKED_DOMAINS,
       include_answer: false,
       include_raw_content: false,
     }),
