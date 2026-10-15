@@ -433,6 +433,14 @@ export async function checkTextClaim(
   };
 }
 
+function toWhatsAppFormat(text: string): string {
+  return text
+    .replace(/\*\*(.+?)\*\*/g, "*$1*")
+    .replace(/^#{1,6}\s+(.*)$/gm, "*$1*")
+    .replace(/^\s*[-*]\s+/gm, "- ")
+    .replace(/\n{3,}/g, "\n\n");
+}
+
 export function isQuestion(text: string): boolean {
   const t = text.trim().toLowerCase();
   // user explicitly wants something verified -> treat as a claim
@@ -476,7 +484,7 @@ export async function answerQuestion(
 
   const reply = [
     "*TruthLens Naija · Answer*",
-    result.text.slice(0, 2800),
+        toWhatsAppFormat(result.text).slice(0, 2800),
     failures.length ? `_Partial check: ${failures.join("; ")}_` : "",
     `*Sources:*\n${formatSources(sources)}`,
   ].filter(Boolean).join("\n\n");
